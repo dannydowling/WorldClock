@@ -36,6 +36,7 @@ namespace WorldClock
         {
             components = new System.ComponentModel.Container();
             clockFlowLayoutPanel = new FlowLayoutPanel();
+            textBox1 = new TextBox();
             _updateTimer = new System.Windows.Forms.Timer(components);
             controlPanel = new Panel();
             addTimeZoneButton = new Button();
@@ -43,12 +44,14 @@ namespace WorldClock
             displayNameLabel = new Label();
             timeZoneComboBox = new ComboBox();
             selectTimeZoneLabel = new Label();
+            clockFlowLayoutPanel.SuspendLayout();
             controlPanel.SuspendLayout();
             SuspendLayout();
             // 
             // clockFlowLayoutPanel
             // 
             clockFlowLayoutPanel.AutoScroll = true;
+            clockFlowLayoutPanel.Controls.Add(textBox1);
             clockFlowLayoutPanel.Dock = DockStyle.Fill;
             clockFlowLayoutPanel.Location = new Point(0, 0);
             clockFlowLayoutPanel.Margin = new Padding(3, 4, 3, 4);
@@ -56,6 +59,13 @@ namespace WorldClock
             clockFlowLayoutPanel.Padding = new Padding(10, 12, 10, 12);
             clockFlowLayoutPanel.Size = new Size(1100, 750);
             clockFlowLayoutPanel.TabIndex = 0;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(13, 15);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(976, 27);
+            textBox1.TabIndex = 0;
             // 
             // _updateTimer
             // 
@@ -69,16 +79,16 @@ namespace WorldClock
             controlPanel.Controls.Add(displayNameLabel);
             controlPanel.Controls.Add(timeZoneComboBox);
             controlPanel.Controls.Add(selectTimeZoneLabel);
-            controlPanel.Dock = DockStyle.Top;
+            controlPanel.Dock = DockStyle.Bottom;
             controlPanel.Location = new Point(0, 0);
             controlPanel.Margin = new Padding(3, 4, 3, 4);
             controlPanel.Name = "controlPanel";
-            controlPanel.Size = new Size(1100, 75);
+            controlPanel.Size = new Size(1100, 60);
             controlPanel.TabIndex = 1;
             // 
             // addTimeZoneButton
             // 
-            addTimeZoneButton.Location = new Point(850, 19);
+            addTimeZoneButton.Location = new Point(958, 6);
             addTimeZoneButton.Margin = new Padding(3, 4, 3, 4);
             addTimeZoneButton.Name = "addTimeZoneButton";
             addTimeZoneButton.Size = new Size(130, 38);
@@ -89,16 +99,16 @@ namespace WorldClock
             // 
             // displayNameTextBox
             // 
-            displayNameTextBox.Location = new Point(650, 21);
+            displayNameTextBox.Location = new Point(686, 11);
             displayNameTextBox.Margin = new Padding(3, 4, 3, 4);
             displayNameTextBox.Name = "displayNameTextBox";
-            displayNameTextBox.Size = new Size(180, 27);
+            displayNameTextBox.Size = new Size(266, 27);
             displayNameTextBox.TabIndex = 3;
             // 
             // displayNameLabel
             // 
             displayNameLabel.AutoSize = true;
-            displayNameLabel.Location = new Point(539, 25);
+            displayNameLabel.Location = new Point(575, 15);
             displayNameLabel.Name = "displayNameLabel";
             displayNameLabel.Size = new Size(105, 20);
             displayNameLabel.TabIndex = 2;
@@ -108,17 +118,17 @@ namespace WorldClock
             // 
             timeZoneComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             timeZoneComboBox.FormattingEnabled = true;
-            timeZoneComboBox.Location = new Point(148, 21);
+            timeZoneComboBox.Location = new Point(145, 13);
             timeZoneComboBox.Margin = new Padding(3, 4, 3, 4);
             timeZoneComboBox.Name = "timeZoneComboBox";
-            timeZoneComboBox.Size = new Size(372, 28);
+            timeZoneComboBox.Size = new Size(424, 28);
             timeZoneComboBox.TabIndex = 1;
             timeZoneComboBox.SelectedIndexChanged += timeZoneComboBox_SelectedIndexChanged;
             // 
             // selectTimeZoneLabel
             // 
             selectTimeZoneLabel.AutoSize = true;
-            selectTimeZoneLabel.Location = new Point(15, 25);
+            selectTimeZoneLabel.Location = new Point(12, 16);
             selectTimeZoneLabel.Name = "selectTimeZoneLabel";
             selectTimeZoneLabel.Size = new Size(127, 20);
             selectTimeZoneLabel.TabIndex = 0;
@@ -135,6 +145,8 @@ namespace WorldClock
             Name = "MainForm";
             Text = "World Clocks";
             Load += MainForm_Load;
+            clockFlowLayoutPanel.ResumeLayout(false);
+            clockFlowLayoutPanel.PerformLayout();
             controlPanel.ResumeLayout(false);
             controlPanel.PerformLayout();
             ResumeLayout(false);
@@ -151,5 +163,6 @@ namespace WorldClock
         private System.Windows.Forms.TextBox displayNameTextBox;
         private System.Windows.Forms.Label displayNameLabel;
         private System.Windows.Forms.Label selectTimeZoneLabel;
+        private TextBox textBox1;
     }
 }

@@ -24,7 +24,7 @@ namespace WorldClock
             _clockControls = new Dictionary<string, AnalogClockControl>();
         }
 
-      
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             // Load available time zones into the combo box
@@ -158,5 +158,6 @@ namespace WorldClock
             SetupUI();
         }
 
+     
     }
 }
