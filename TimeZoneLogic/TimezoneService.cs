@@ -1,142 +1,105 @@
-﻿// -- TimezoneDetector/Services/TimezoneService.cs --
+﻿// File: Services/TimeZoneService.cs - Update to get all system time zones
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WorldClock.Models;
 
-namespace WorldClock
+namespace WorldClock.Services
 {
-    /// <summary>
-    /// Service class to handle timezone operations
-    /// </summary>
-    public class TimezoneService
+    public class TimeZoneService
     {
-        private Dictionary<string, TimeZoneInfo> _availableTimezones;
+        private List<TimeZoneModel> _timeZones;
 
-        public TimezoneService()
+        public TimeZoneService()
         {
-            // Initialize the dictionary of available timezones
-            LoadAvailableTimezones();
+            InitializeTimeZones();
         }
 
-        /// <summary>
-        /// Load all system timezones into a dictionary
-        /// </summary>
-        private void LoadAvailableTimezones()
+        private void InitializeTimeZones()
         {
-            _availableTimezones = new Dictionary<string, TimeZoneInfo>();
-
-            foreach (TimeZoneInfo zone in TimeZoneInfo.GetSystemTimeZones().OrderBy(z => z.BaseUtcOffset))
+            _timeZones = new List<TimeZoneModel>
             {
-                string displayName = $"{zone.DisplayName} ({FormatOffset(zone.BaseUtcOffset)})";
-                _availableTimezones.Add(displayName, zone);
-            }
-        }
-
-        /// <summary>
-        /// Get all available timezone display names
-        /// </summary>
-        public List<string> GetAvailableTimezones()
-        {
-            return _availableTimezones.Keys.ToList();
-        }
-
-        /// <summary>
-        /// Get the local timezone display name
-        /// </summary>
-        public string GetLocalTimezoneName()
-        {
-            return TimeZoneInfo.Local.DisplayName;
-        }
-
-        /// <summary>
-        /// Get the local UTC offset
-        /// </summary>
-        public string GetLocalUtcOffset()
-        {
-            return TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).ToString();
-        }
-
-        /// <summary>
-        /// Get a default timezone to select from the popular timezones
-        /// </summary>
-        public string GetDefaultTimezone()
-        {
-            // Try to find a popular timezone from the list
-            string[] popularZones = {
-                "Pacific Standard Time",
-                "Eastern Standard Time",
-                "GMT Standard Time",
-                "Central Europe Standard Time",
-                "India Standard Time",
-                "Tokyo Standard Time",
-                "AUS Eastern Standard Time"
-            };
-
-            foreach (string popularZone in popularZones)
-            {
-                try
-                {
-                    TimeZoneInfo zone = TimeZoneInfo.FindSystemTimeZoneById(popularZone);
-                    string key = _availableTimezones.Keys.FirstOrDefault(k => k.Contains(zone.StandardName));
-                    if (key != null)
-                    {
-                        return key;
-                    }
-                }
-                catch
-                {
-                    // Ignore if timezone not found
-                }
-            }
-
-            // Try to find local timezone as fallback
-            string localKey = _availableTimezones.Keys
-                .FirstOrDefault(k => k.Contains(TimeZoneInfo.Local.StandardName));
-
-            return localKey;
-        }
-
-        /// <summary>
-        /// Get detailed information about a specific timezone
-        /// </summary>
-        public TimezoneInfoDTO GetTimezoneInfo(string timezoneKey)
-        {
-            if (!_availableTimezones.ContainsKey(timezoneKey))
-            {
-                return new TimezoneInfoDTO
-                {
-                    DisplayName = "Unknown timezone",
-                    CurrentTime = "-",
-                    OffsetFromLocal = "-"
-                };
-            }
-
-            TimeZoneInfo selectedZone = _availableTimezones[timezoneKey];
-            DateTime now = DateTime.Now;
-            DateTime utcNow = DateTime.UtcNow;
-            DateTime zoneTime = TimeZoneInfo.ConvertTimeFromUtc(utcNow, selectedZone);
-
-            TimeSpan offsetFromLocal = selectedZone.GetUtcOffset(utcNow) -
-                                      TimeZoneInfo.Local.GetUtcOffset(now);
-
-            return new TimezoneInfoDTO
-            {
-                DisplayName = selectedZone.DisplayName,
-                CurrentTime = zoneTime.ToString(),
-                OffsetFromLocal = $"{FormatOffset(offsetFromLocal)} hours"
+                new TimeZoneModel("UTC", "UTC (Coordinated Universal Time)", TimeZoneInfo.Utc),
+                new TimeZoneModel("GMT", "London (GMT)", TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time")),
+                new TimeZoneModel("CET", "Paris (Central European Time)", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time")),
+                new TimeZoneModel("NZST", "Tauranga (New Zealand)", TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time")),
+                new TimeZoneModel("AEDT", "Melbourne (Australia)", TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time")),
+                new TimeZoneModel("AKST", "Juneau (Alaska)", TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time")),
+                new TimeZoneModel("GST", "Dubai (UAE)", TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time"))
+                
             };
         }
 
-        /// <summary>
-        /// Format a TimeSpan offset in a readable format (+/-HH:MM)
-        /// </summary>
-        private string FormatOffset(TimeSpan offset)
+        // Gets all available system time zones for the dropdown
+        public List<KeyValuePair<string, string>> GetAllAvailableTimeZones()
         {
-            string sign = offset.TotalHours >= 0 ? "+" : "-";
-            int hours = Math.Abs((int)offset.TotalHours);
-            int minutes = Math.Abs(offset.Minutes);
+            var availableTimeZones = TimeZoneInfo.GetSystemTimeZones()
+                .OrderBy(tz => tz.DisplayName)
+                .Select(tz => new KeyValuePair<string, string>(
+                    tz.Id,
+                    $"{tz.DisplayName} ({tz.BaseUtcOffset:hh\\:mm})"
+                ))
+                .ToList();
 
-            return $"{sign}{hours:D2}:{minutes:D2}";
+            return availableTimeZones;
+        }
+
+        // Add a new time zone to the collection
+        public void AddTimeZone(string id, string displayName)
+        {
+            // Check if already exists
+            if (_timeZones.Any(tz => tz.TimeZoneInfo.Id == id))
+                return;
+
+            try
+            {
+                var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(id);
+                string abbreviation = GetTimeZoneAbbreviation(timeZoneInfo);
+
+                var model = new TimeZoneModel(
+                    abbreviation,
+                    displayName,
+                    timeZoneInfo
+                );
+
+                _timeZones.Add(model);
+            }
+            catch (Exception)
+            {
+                // Handle exception if time zone not found
+            }
+        }
+
+        // Helper to generate abbreviation
+        private string GetTimeZoneAbbreviation(TimeZoneInfo tzi)
+        {
+            var words = tzi.DisplayName.Split(' ');
+            if (words.Length > 1)
+            {
+                // Try to extract abbreviation from display name
+                string abbr = string.Concat(words.Where(w => char.IsUpper(w[0])).Select(w => w[0]));
+                if (abbr.Length > 0)
+                    return abbr;
+            }
+
+            // Fallback to offset-based abbreviation
+            return $"UTC{tzi.BaseUtcOffset:hh\\:mm}";
+        }
+
+        // Remove a time zone from the collection
+        public void RemoveTimeZone(string name)
+        {
+            _timeZones.RemoveAll(tz => tz.Name == name);
+        }
+
+        public List<TimeZoneModel> GetAllTimeZones()
+        {
+            return _timeZones;
+        }
+
+        public TimeZoneModel GetTimeZoneByName(string name)
+        {
+            return _timeZones.Find(tz => tz.Name == name);
         }
     }
 }

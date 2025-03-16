@@ -1,4 +1,4 @@
-﻿// -- TimezoneDetector/Forms/MainForm.Designer.cs --
+﻿// File: MainForm.Designer.cs
 namespace WorldClock
 {
     partial class MainForm
@@ -18,6 +18,11 @@ namespace WorldClock
             {
                 components.Dispose();
             }
+            if (disposing)
+            {
+                _updateTimer?.Stop();
+                _updateTimer?.Dispose();
+            }
             base.Dispose(disposing);
         }
 
@@ -30,253 +35,121 @@ namespace WorldClock
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            lblLocalTitle = new Label();
-            lblLocalTime = new Label();
-            lblLocalTimeValue = new Label();
-            lblLocalZone = new Label();
-            lblLocalZoneValue = new Label();
-            lblUtcOffset = new Label();
-            lblUtcOffsetValue = new Label();
-            lblWorldTitle = new Label();
-            lblSelectZone = new Label();
-            cboTimezones = new ComboBox();
-            pnlResults = new Panel();
-            lblTimeDiffValue = new Label();
-            lblTimeDiff = new Label();
-            lblSelectedTimeValue = new Label();
-            lblSelectedTime = new Label();
-            lblSelectedZoneValue = new Label();
-            lblSelectedZone = new Label();
-            btnRefresh = new Button();
-            timer = new System.Windows.Forms.Timer(components);
-            pnlResults.SuspendLayout();
+            clockFlowLayoutPanel = new FlowLayoutPanel();
+            _updateTimer = new System.Windows.Forms.Timer(components);
+            controlPanel = new Panel();
+            addTimeZoneButton = new Button();
+            displayNameTextBox = new TextBox();
+            displayNameLabel = new Label();
+            timeZoneComboBox = new ComboBox();
+            selectTimeZoneLabel = new Label();
+            controlPanel.SuspendLayout();
             SuspendLayout();
             // 
-            // lblLocalTitle
+            // clockFlowLayoutPanel
             // 
-            lblLocalTitle.AutoSize = true;
-            lblLocalTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            lblLocalTitle.Location = new Point(20, 20);
-            lblLocalTitle.Name = "lblLocalTitle";
-            lblLocalTitle.Size = new Size(253, 21);
-            lblLocalTitle.TabIndex = 0;
-            lblLocalTitle.Text = "Your Local Timezone Information";
+            clockFlowLayoutPanel.AutoScroll = true;
+            clockFlowLayoutPanel.Dock = DockStyle.Fill;
+            clockFlowLayoutPanel.Location = new Point(0, 0);
+            clockFlowLayoutPanel.Margin = new Padding(3, 4, 3, 4);
+            clockFlowLayoutPanel.Name = "clockFlowLayoutPanel";
+            clockFlowLayoutPanel.Padding = new Padding(10, 12, 10, 12);
+            clockFlowLayoutPanel.Size = new Size(1100, 750);
+            clockFlowLayoutPanel.TabIndex = 0;
             // 
-            // lblLocalTime
+            // _updateTimer
             // 
-            lblLocalTime.AutoSize = true;
-            lblLocalTime.Location = new Point(20, 50);
-            lblLocalTime.Name = "lblLocalTime";
-            lblLocalTime.Size = new Size(111, 15);
-            lblLocalTime.TabIndex = 1;
-            lblLocalTime.Text = "Current Local Time:";
+            _updateTimer.Interval = 1000;
+            _updateTimer.Tick += UpdateTimer_Tick;
             // 
-            // lblLocalTimeValue
+            // controlPanel
             // 
-            lblLocalTimeValue.AutoSize = true;
-            lblLocalTimeValue.Location = new Point(180, 50);
-            lblLocalTimeValue.Name = "lblLocalTimeValue";
-            lblLocalTimeValue.Size = new Size(12, 15);
-            lblLocalTimeValue.TabIndex = 2;
-            lblLocalTimeValue.Text = "-";
+            controlPanel.Controls.Add(addTimeZoneButton);
+            controlPanel.Controls.Add(displayNameTextBox);
+            controlPanel.Controls.Add(displayNameLabel);
+            controlPanel.Controls.Add(timeZoneComboBox);
+            controlPanel.Controls.Add(selectTimeZoneLabel);
+            controlPanel.Dock = DockStyle.Top;
+            controlPanel.Location = new Point(0, 0);
+            controlPanel.Margin = new Padding(3, 4, 3, 4);
+            controlPanel.Name = "controlPanel";
+            controlPanel.Size = new Size(1100, 75);
+            controlPanel.TabIndex = 1;
             // 
-            // lblLocalZone
+            // addTimeZoneButton
             // 
-            lblLocalZone.AutoSize = true;
-            lblLocalZone.Location = new Point(20, 75);
-            lblLocalZone.Name = "lblLocalZone";
-            lblLocalZone.Size = new Size(88, 15);
-            lblLocalZone.TabIndex = 3;
-            lblLocalZone.Text = "Your Timezone:";
+            addTimeZoneButton.Location = new Point(850, 19);
+            addTimeZoneButton.Margin = new Padding(3, 4, 3, 4);
+            addTimeZoneButton.Name = "addTimeZoneButton";
+            addTimeZoneButton.Size = new Size(130, 38);
+            addTimeZoneButton.TabIndex = 4;
+            addTimeZoneButton.Text = "Add Time Zone";
+            addTimeZoneButton.UseVisualStyleBackColor = true;
+            addTimeZoneButton.Click += addTimeZoneButton_Click;
             // 
-            // lblLocalZoneValue
+            // displayNameTextBox
             // 
-            lblLocalZoneValue.AutoSize = true;
-            lblLocalZoneValue.Location = new Point(180, 75);
-            lblLocalZoneValue.Name = "lblLocalZoneValue";
-            lblLocalZoneValue.Size = new Size(12, 15);
-            lblLocalZoneValue.TabIndex = 4;
-            lblLocalZoneValue.Text = "-";
+            displayNameTextBox.Location = new Point(650, 21);
+            displayNameTextBox.Margin = new Padding(3, 4, 3, 4);
+            displayNameTextBox.Name = "displayNameTextBox";
+            displayNameTextBox.Size = new Size(180, 27);
+            displayNameTextBox.TabIndex = 3;
             // 
-            // lblUtcOffset
+            // displayNameLabel
             // 
-            lblUtcOffset.AutoSize = true;
-            lblUtcOffset.Location = new Point(20, 100);
-            lblUtcOffset.Name = "lblUtcOffset";
-            lblUtcOffset.Size = new Size(105, 15);
-            lblUtcOffset.TabIndex = 5;
-            lblUtcOffset.Text = "Current UTC Offset:";
+            displayNameLabel.AutoSize = true;
+            displayNameLabel.Location = new Point(539, 25);
+            displayNameLabel.Name = "displayNameLabel";
+            displayNameLabel.Size = new Size(105, 20);
+            displayNameLabel.TabIndex = 2;
+            displayNameLabel.Text = "Display Name:";
             // 
-            // lblUtcOffsetValue
+            // timeZoneComboBox
             // 
-            lblUtcOffsetValue.AutoSize = true;
-            lblUtcOffsetValue.Location = new Point(180, 100);
-            lblUtcOffsetValue.Name = "lblUtcOffsetValue";
-            lblUtcOffsetValue.Size = new Size(12, 15);
-            lblUtcOffsetValue.TabIndex = 6;
-            lblUtcOffsetValue.Text = "-";
+            timeZoneComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            timeZoneComboBox.FormattingEnabled = true;
+            timeZoneComboBox.Location = new Point(148, 21);
+            timeZoneComboBox.Margin = new Padding(3, 4, 3, 4);
+            timeZoneComboBox.Name = "timeZoneComboBox";
+            timeZoneComboBox.Size = new Size(372, 28);
+            timeZoneComboBox.TabIndex = 1;
+            timeZoneComboBox.SelectedIndexChanged += timeZoneComboBox_SelectedIndexChanged;
             // 
-            // lblWorldTitle
+            // selectTimeZoneLabel
             // 
-            lblWorldTitle.AutoSize = true;
-            lblWorldTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            lblWorldTitle.Location = new Point(20, 140);
-            lblWorldTitle.Name = "lblWorldTitle";
-            lblWorldTitle.Size = new Size(143, 21);
-            lblWorldTitle.TabIndex = 7;
-            lblWorldTitle.Text = "World Timezones";
-            // 
-            // lblSelectZone
-            // 
-            lblSelectZone.AutoSize = true;
-            lblSelectZone.Location = new Point(20, 170);
-            lblSelectZone.Name = "lblSelectZone";
-            lblSelectZone.Size = new Size(94, 15);
-            lblSelectZone.TabIndex = 8;
-            lblSelectZone.Text = "Select Timezone:";
-            // 
-            // cboTimezones
-            // 
-            cboTimezones.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboTimezones.FormattingEnabled = true;
-            cboTimezones.Location = new Point(180, 170);
-            cboTimezones.Name = "cboTimezones";
-            cboTimezones.Size = new Size(350, 23);
-            cboTimezones.TabIndex = 9;
-            cboTimezones.SelectedIndexChanged += CboTimezones_SelectedIndexChanged;
-            // 
-            // pnlResults
-            // 
-            pnlResults.BorderStyle = BorderStyle.FixedSingle;
-            pnlResults.Controls.Add(lblTimeDiffValue);
-            pnlResults.Controls.Add(lblTimeDiff);
-            pnlResults.Controls.Add(lblSelectedTimeValue);
-            pnlResults.Controls.Add(lblSelectedTime);
-            pnlResults.Controls.Add(lblSelectedZoneValue);
-            pnlResults.Controls.Add(lblSelectedZone);
-            pnlResults.Location = new Point(20, 200);
-            pnlResults.Name = "pnlResults";
-            pnlResults.Size = new Size(540, 200);
-            pnlResults.TabIndex = 10;
-            // 
-            // lblTimeDiffValue
-            // 
-            lblTimeDiffValue.AutoSize = true;
-            lblTimeDiffValue.Location = new Point(160, 60);
-            lblTimeDiffValue.Name = "lblTimeDiffValue";
-            lblTimeDiffValue.Size = new Size(12, 15);
-            lblTimeDiffValue.TabIndex = 5;
-            lblTimeDiffValue.Text = "-";
-            // 
-            // lblTimeDiff
-            // 
-            lblTimeDiff.AutoSize = true;
-            lblTimeDiff.Location = new Point(10, 60);
-            lblTimeDiff.Name = "lblTimeDiff";
-            lblTimeDiff.Size = new Size(123, 15);
-            lblTimeDiff.TabIndex = 4;
-            lblTimeDiff.Text = "Difference from Local:";
-            // 
-            // lblSelectedTimeValue
-            // 
-            lblSelectedTimeValue.AutoSize = true;
-            lblSelectedTimeValue.Location = new Point(160, 35);
-            lblSelectedTimeValue.Name = "lblSelectedTimeValue";
-            lblSelectedTimeValue.Size = new Size(12, 15);
-            lblSelectedTimeValue.TabIndex = 3;
-            lblSelectedTimeValue.Text = "-";
-            // 
-            // lblSelectedTime
-            // 
-            lblSelectedTime.AutoSize = true;
-            lblSelectedTime.Location = new Point(10, 35);
-            lblSelectedTime.Name = "lblSelectedTime";
-            lblSelectedTime.Size = new Size(79, 15);
-            lblSelectedTime.TabIndex = 2;
-            lblSelectedTime.Text = "Current Time:";
-            // 
-            // lblSelectedZoneValue
-            // 
-            lblSelectedZoneValue.AutoSize = true;
-            lblSelectedZoneValue.Location = new Point(160, 10);
-            lblSelectedZoneValue.Name = "lblSelectedZoneValue";
-            lblSelectedZoneValue.Size = new Size(12, 15);
-            lblSelectedZoneValue.TabIndex = 1;
-            lblSelectedZoneValue.Text = "-";
-            // 
-            // lblSelectedZone
-            // 
-            lblSelectedZone.AutoSize = true;
-            lblSelectedZone.Location = new Point(10, 10);
-            lblSelectedZone.Name = "lblSelectedZone";
-            lblSelectedZone.Size = new Size(105, 15);
-            lblSelectedZone.TabIndex = 0;
-            lblSelectedZone.Text = "Selected Timezone:";
-            // 
-            // btnRefresh
-            // 
-            btnRefresh.Location = new Point(250, 410);
-            btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(100, 30);
-            btnRefresh.TabIndex = 11;
-            btnRefresh.Text = "Refresh Times";
-            btnRefresh.UseVisualStyleBackColor = true;
-            btnRefresh.Click += BtnRefresh_Click;
-            // 
-            // timer
-            // 
-            timer.Enabled = true;
-            timer.Interval = 1000;
-            timer.Tick += Timer_Tick;
+            selectTimeZoneLabel.AutoSize = true;
+            selectTimeZoneLabel.Location = new Point(15, 25);
+            selectTimeZoneLabel.Name = "selectTimeZoneLabel";
+            selectTimeZoneLabel.Size = new Size(127, 20);
+            selectTimeZoneLabel.TabIndex = 0;
+            selectTimeZoneLabel.Text = "Select Time Zone:";
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(584, 450);
-            Controls.Add(btnRefresh);
-            Controls.Add(pnlResults);
-            Controls.Add(cboTimezones);
-            Controls.Add(lblSelectZone);
-            Controls.Add(lblWorldTitle);
-            Controls.Add(lblUtcOffsetValue);
-            Controls.Add(lblUtcOffset);
-            Controls.Add(lblLocalZoneValue);
-            Controls.Add(lblLocalZone);
-            Controls.Add(lblLocalTimeValue);
-            Controls.Add(lblLocalTime);
-            Controls.Add(lblLocalTitle);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            MaximizeBox = false;
+            ClientSize = new Size(1100, 750);
+            Controls.Add(controlPanel);
+            Controls.Add(clockFlowLayoutPanel);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "MainForm";
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "Timezone Detector";
-            pnlResults.ResumeLayout(false);
-            pnlResults.PerformLayout();
+            Text = "World Clocks";
+            Load += MainForm_Load;
+            controlPanel.ResumeLayout(false);
+            controlPanel.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
+
         }
 
         #endregion
 
-        private Label lblLocalTitle;
-        private Label lblLocalTime;
-        private Label lblLocalTimeValue;
-        private Label lblLocalZone;
-        private Label lblLocalZoneValue;
-        private Label lblUtcOffset;
-        private Label lblUtcOffsetValue;
-        private Label lblWorldTitle;
-        private Label lblSelectZone;
-        private ComboBox cboTimezones;
-        private Panel pnlResults;
-        private Label lblTimeDiffValue;
-        private Label lblTimeDiff;
-        private Label lblSelectedTimeValue;
-        private Label lblSelectedTime;
-        private Label lblSelectedZoneValue;
-        private Label lblSelectedZone;
-        private Button btnRefresh;
-        private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.FlowLayoutPanel clockFlowLayoutPanel;
+        private System.Windows.Forms.Timer _updateTimer;
+        private System.Windows.Forms.Panel controlPanel;
+        private System.Windows.Forms.ComboBox timeZoneComboBox;
+        private System.Windows.Forms.Button addTimeZoneButton;
+        private System.Windows.Forms.TextBox displayNameTextBox;
+        private System.Windows.Forms.Label displayNameLabel;
+        private System.Windows.Forms.Label selectTimeZoneLabel;
     }
 }
