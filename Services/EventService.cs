@@ -17,6 +17,10 @@ namespace WorldClock
         {
             _events.Add(scheduledEvent);
         }
+        public void ClearEvents()
+        {
+            _events.Clear();
+        }
 
         public void RemoveEvent(Guid eventId)
         {

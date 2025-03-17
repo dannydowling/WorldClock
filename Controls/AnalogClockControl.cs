@@ -2,17 +2,22 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 
 namespace WorldClock
 {
+    [Serializable]
     public class AnalogClockControl : UserControl
     {
+
         private DateTime _currentTime;
         private Font _digitalFont;
-        private string _timeZoneName;
+        private string _timeZoneName = string.Empty;
+        [XmlIgnore]
         private List<ScheduledEvent> _scheduledEvents;
-        private TimeZoneInfo _timeZoneInfo;
+        [XmlIgnore]
+        private TimeZoneInfo _timeZoneInfo = TimeZoneInfo.Utc;
 
         public string TimeZoneName
         {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Reflection.Metadata;
 using System.Windows.Forms;
-
 
 namespace WorldClock
 {
@@ -17,6 +17,8 @@ namespace WorldClock
         private Button _addEventButton;
         private EventService _eventService;
         private TimeZoneModel _timeZoneModel;
+        private TabPage _distanceTabPage;
+
 
         public AnalogClockControl AnalogClock => _analogClock;
         public TimeZoneModel TimeZoneModel => _timeZoneModel;
@@ -58,6 +60,29 @@ namespace WorldClock
             // Create calendar tab
             _calendarTabPage = new TabPage("Calendar");
 
+            // Create flight distance tab
+            _distanceTabPage = new TabPage("Flight");
+            var flightPanel = new Panel();
+            flightPanel.Dock = DockStyle.Fill;
+
+            // Create a button to open the flight calculator
+            Button openFlightCalculatorButton = new Button();
+            openFlightCalculatorButton.Text = "Open Flight Calculator";
+            openFlightCalculatorButton.Size = new Size(200, 40);
+            openFlightCalculatorButton.Location = new Point(
+                (flightPanel.Width - 200) / 2,
+                (flightPanel.Height - 40) / 2);
+            openFlightCalculatorButton.Anchor = AnchorStyles.None;
+            openFlightCalculatorButton.Click += (sender, e) => {
+                using (var flightCalculatorForm = new FlightCalculatorForm(_timeZoneModel))
+                {
+                    flightCalculatorForm.ShowDialog();
+                }
+            };
+
+            flightPanel.Controls.Add(openFlightCalculatorButton);
+            _distanceTabPage.Controls.Add(flightPanel);
+
             // Create monthly calendar
             _calendar = new MonthCalendar();
             _calendar.MaxSelectionCount = 1;
@@ -89,6 +114,7 @@ namespace WorldClock
             // Add tabs to tab control
             _tabControl.TabPages.Add(_clockTabPage);
             _tabControl.TabPages.Add(_calendarTabPage);
+            _tabControl.TabPages.Add(_distanceTabPage);
 
             // Add controls to panel
             Controls.Add(_tabControl);
@@ -152,6 +178,24 @@ namespace WorldClock
                     UpdateEventList(_calendar.SelectionStart);
                 }
             }
+        }
+
+        public event EventHandler<TimeZoneModel> RemoveRequested;
+
+
+        private void AddRemoveButton()
+        {
+            Button removeButton = new Button();
+            removeButton.Text = "❌";
+            removeButton.Size = new Size(25, 25);
+            removeButton.Location = new Point(this.Width - 30, 5);
+            removeButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            removeButton.FlatStyle = FlatStyle.Flat;
+            removeButton.FlatAppearance.BorderSize = 0;
+            removeButton.Click += (sender, e) => RemoveRequested?.Invoke(this, _timeZoneModel);
+
+            this.Controls.Add(removeButton);
+            removeButton.BringToFront();
         }
 
         private void EventListView_DoubleClick(object sender, EventArgs e)

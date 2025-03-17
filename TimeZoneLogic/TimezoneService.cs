@@ -67,6 +67,17 @@ namespace WorldClock
             }
         }
 
+        public void ClearTimeZones()
+        {
+            _timeZones.Clear();
+        }
+
+        public void AddTimeZoneModel(TimeZoneModel model)
+        {
+            _timeZones.Add(model);
+        }
+
+
         // Helper to generate abbreviation
         private string GetTimeZoneAbbreviation(TimeZoneInfo tzi)
         {

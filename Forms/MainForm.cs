@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
-
 
 namespace WorldClock
 {
@@ -10,7 +10,9 @@ namespace WorldClock
     {
         private TimeZoneService _timeZoneService;
         private EventService _eventService;
+        private DataService _dataService;
         private Dictionary<string, ClockTabPanel> _clockPanels;
+        private bool _dataLoaded = false;
 
         public MainForm()
         {
@@ -19,6 +21,7 @@ namespace WorldClock
             // Initialize services
             _timeZoneService = new TimeZoneService();
             _eventService = new EventService();
+            _dataService = new DataService();
 
             // Initialize clock panels dictionary
             _clockPanels = new Dictionary<string, ClockTabPanel>();
@@ -26,11 +29,17 @@ namespace WorldClock
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            // Try to load saved data
+            _dataLoaded = _dataService.LoadData(_timeZoneService, _eventService);
+
             // Load available time zones into the combo box
             LoadTimeZoneComboBox();
 
             // Set up the UI
             SetupUI();
+
+            // Setup context menu
+            SetupContextMenu();
 
             // Start the timer
             _updateTimer.Start();
@@ -56,12 +65,16 @@ namespace WorldClock
         {
             // Clear any existing controls
             clockFlowLayoutPanel.Controls.Clear();
+            _clockPanels.Clear();
 
             // Add clocks for each time zone
             foreach (var timeZone in _timeZoneService.GetAllTimeZones())
             {
                 // Create clock panel with tabs
                 ClockTabPanel clockPanel = new ClockTabPanel(timeZone, _eventService);
+
+                // Subscribe to the RemoveRequested event
+                clockPanel.RemoveRequested += ClockPanel_RemoveRequested;
 
                 // Store the clock panel for later updates
                 _clockPanels.Add(timeZone.Name, clockPanel);
@@ -72,6 +85,16 @@ namespace WorldClock
 
             // Update clocks initially
             UpdateClocks();
+        }
+
+        private void ClockPanel_RemoveRequested(object sender, TimeZoneModel timeZoneModel)
+        {
+            if (MessageBox.Show($"Are you sure you want to remove {timeZoneModel.DisplayName}?",
+                "Remove Time Zone", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                _timeZoneService.RemoveTimeZone(timeZoneModel.Name);
+                RefreshClocks();
+            }
         }
 
         private void UpdateTimer_Tick(object sender, EventArgs e)
@@ -137,7 +160,6 @@ namespace WorldClock
             SetupUI();
         }
 
-        // Add this context menu for right-clicking on clocks
         private void SetupContextMenu()
         {
             ContextMenuStrip clockContextMenu = new ContextMenuStrip();
@@ -192,6 +214,21 @@ namespace WorldClock
                 menu.SourceControl is ClockTabPanel panel)
             {
                 AddEventWithType(panel.TimeZoneModel, EventType.Reminder);
+            }
+        }
+
+        private void RemoveTimeZone_Click(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem menuItem &&
+                menuItem.Owner is ContextMenuStrip menu &&
+                menu.SourceControl is ClockTabPanel panel)
+            {
+                if (MessageBox.Show($"Are you sure you want to remove {panel.TimeZoneModel.DisplayName}?",
+                    "Remove Time Zone", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    _timeZoneService.RemoveTimeZone(panel.TimeZoneModel.Name);
+                    RefreshClocks();
+                }
             }
         }
 
@@ -250,27 +287,20 @@ namespace WorldClock
             }
         }
 
-        private void RemoveTimeZone_Click(object sender, EventArgs e)
-        {
-            if (sender is ToolStripMenuItem menuItem &&
-                menuItem.Owner is ContextMenuStrip menu &&
-                menu.SourceControl is ClockTabPanel panel)
-            {
-                if (MessageBox.Show($"Are you sure you want to remove {panel.TimeZoneModel.DisplayName}?",
-                    "Remove Time Zone", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    _timeZoneService.RemoveTimeZone(panel.TimeZoneModel.Name);
-                    RefreshClocks();
-                }
-            }
-        }
-
         private void RefreshEvents()
         {
             foreach (var panel in _clockPanels.Values)
             {
                 panel.RefreshEvents();
             }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // Save data before closing
+            _dataService.SaveData(_timeZoneService, _eventService);
         }
     }
 }
