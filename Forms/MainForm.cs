@@ -17,6 +17,7 @@ namespace WorldClock
         public MainForm()
         {
             InitializeComponent();
+            this.ClientSize = new System.Drawing.Size(1100, 375);
 
             // Initialize services
             _timeZoneService = new TimeZoneService();
@@ -28,20 +29,11 @@ namespace WorldClock
         }
 
         private void MainForm_Load(object sender, EventArgs e)
-        {
-            // Try to load saved data
-            _dataLoaded = _dataService.LoadData(_timeZoneService, _eventService);
-
-            // Load available time zones into the combo box
+        {            
+            _dataLoaded = _dataService.LoadData(_timeZoneService, _eventService);            
             LoadTimeZoneComboBox();
-
-            // Set up the UI
             SetupUI();
-
-            // Setup context menu
             SetupContextMenu();
-
-            // Start the timer
             _updateTimer.Start();
         }
 
@@ -62,28 +54,21 @@ namespace WorldClock
         }
 
         private void SetupUI()
-        {
-            // Clear any existing controls
+        {           
             clockFlowLayoutPanel.Controls.Clear();
             _clockPanels.Clear();
-
-            // Add clocks for each time zone
+           
             foreach (var timeZone in _timeZoneService.GetAllTimeZones())
-            {
-                // Create clock panel with tabs
+            {               
                 ClockTabPanel clockPanel = new ClockTabPanel(timeZone, _eventService);
-
                 // Subscribe to the RemoveRequested event
                 clockPanel.RemoveRequested += ClockPanel_RemoveRequested;
-
                 // Store the clock panel for later updates
                 _clockPanels.Add(timeZone.Name, clockPanel);
-
                 // Add the panel to the flow layout panel
                 clockFlowLayoutPanel.Controls.Add(clockPanel);
             }
-
-            // Update clocks initially
+            
             UpdateClocks();
         }
 

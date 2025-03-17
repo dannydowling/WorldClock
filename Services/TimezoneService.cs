@@ -18,12 +18,7 @@ namespace WorldClock
         {
             _timeZones = new List<TimeZoneModel>
             {
-                new TimeZoneModel("UTC", "UTC (Coordinated Universal Time)", TimeZoneInfo.Utc),               
-                new TimeZoneModel("NZST", "Tauranga (New Zealand)", TimeZoneInfo.FindSystemTimeZoneById("New Zealand Standard Time")),
-                new TimeZoneModel("AEDT", "Melbourne (Australia)", TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time")),
-                new TimeZoneModel("AKST", "Juneau (Alaska)", TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time"))
-           
-                
+
             };
         }
 

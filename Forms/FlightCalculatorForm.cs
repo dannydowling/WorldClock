@@ -25,9 +25,9 @@ namespace WorldClock
         private ComboBox _destCountryComboBox;
         private ComboBox _destStateComboBox;
         private ComboBox _destCityComboBox;
-        private ComboBox _destAirportComboBox;
+        private ComboBox _destAirportComboBox;        
 
-        private LocationLogic _locationLogic;
+        private ReadZipFileLogic _locationLogic;
         private bool _isLoading = false;
 
         public FlightCalculatorForm(TimeZoneModel timeZoneModel)
@@ -36,7 +36,7 @@ namespace WorldClock
             
             InitializeComponent();
             InitializeCustomComponents();
-            _locationLogic = new LocationLogic();
+            _locationLogic = new ReadZipFileLogic();
             LoadCountriesAsync();
             this.Text = $"Flight Calculator - {_timeZoneModel.DisplayName}";
         }
@@ -335,7 +335,7 @@ namespace WorldClock
             this.Controls.Add(resultsPanel);
 
             // Initialize LocationLogic and load data
-            _locationLogic = new LocationLogic();
+            _locationLogic = new ReadZipFileLogic();
 
             // Load countries in the background
             LoadCountriesAsync();

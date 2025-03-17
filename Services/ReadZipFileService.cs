@@ -8,9 +8,40 @@ using System.Threading.Tasks;
 
 namespace WorldClock
 {
+
+    enum PickerType { Country, State, City }
     internal class ReadZipFileLogic
     {
-        public IEnumerable<string> ReadEntriesInZipFile(string path, PickerType type)
+        public ReadZipFileLogic()
+        {
+            var cacheDir = Path.GetTempPath();
+            if (!File.Exists(cacheDir + "/Locations.Zip"))
+            {
+                File.WriteAllBytes(cacheDir + "/Locations.Zip", Properties.Resources.locations);
+            }
+        }
+
+        internal IEnumerable<string> GetCountries()
+        { return ReadEntriesInZipFile("Countries/", PickerType.Country).Distinct(); }
+
+        internal IEnumerable<string> GetStates(string country)
+        {
+            return ReadEntriesInZipFile($"Countries/{country}/", PickerType.State).Distinct();
+        }
+
+        internal IEnumerable<string> GetCities(string country, string stateName)
+        { return ReadEntriesInZipFile($"Countries/{country}/{stateName}/", PickerType.City).Distinct(); }
+
+        internal IEnumerable<string> GetAirports(string countryName, string stateName, string cityName)
+        { return LocationsLookup(countryName, stateName, cityName).Select(x => x.name).Distinct(); }
+
+        internal List<LocationClass> LocationsLookup(string countryName, string stateName, string cityName)
+        { return ReadSpecificEntryInZipFile($"Countries/{countryName}/{stateName}/{cityName}/{cityName}.txt"); }
+
+        internal LocationClass SpecificLocationLookup(string countryName, string stateName, string cityName, string airportName)
+        { return LocationsLookup(countryName, stateName, cityName).Single(x => x.name == airportName); }
+
+        private IEnumerable<string> ReadEntriesInZipFile(string path, PickerType type)
         {
             var cacheDir = Path.GetTempPath();
 
