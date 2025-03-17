@@ -1,6 +1,3 @@
-// -- TimezoneDetector/Program.cs --
-
-
 namespace WorldClock
 {
     internal static class Program

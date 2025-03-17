@@ -1,7 +1,6 @@
-﻿// File: Models/TimeZoneInfo.cs
-using System;
+﻿using System;
 
-namespace WorldClock.Models
+namespace WorldClock
 {
     public class TimeZoneModel
     {

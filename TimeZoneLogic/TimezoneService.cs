@@ -1,10 +1,9 @@
-﻿// File: Services/TimeZoneService.cs - Update to get all system time zones
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using WorldClock.Models;
 
-namespace WorldClock.Services
+
+namespace WorldClock
 {
     public class TimeZoneService
     {

@@ -1,16 +1,18 @@
-﻿// File: Controls/AnalogClockControl.cs
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace WorldClock.Controls
+
+namespace WorldClock
 {
     public class AnalogClockControl : UserControl
     {
-        private System.Windows.Forms.Timer _timer;
         private DateTime _currentTime;
         private Font _digitalFont;
         private string _timeZoneName;
+        private List<ScheduledEvent> _scheduledEvents;
+        private TimeZoneInfo _timeZoneInfo;
 
         public string TimeZoneName
         {
@@ -32,6 +34,22 @@ namespace WorldClock.Controls
             }
         }
 
+        public TimeZoneInfo TimeZoneInfo
+        {
+            get { return _timeZoneInfo; }
+            set { _timeZoneInfo = value; }
+        }
+
+        public List<ScheduledEvent> ScheduledEvents
+        {
+            get { return _scheduledEvents; }
+            set
+            {
+                _scheduledEvents = value;
+                Invalidate();
+            }
+        }
+
         public AnalogClockControl()
         {
             // Set default size
@@ -47,6 +65,9 @@ namespace WorldClock.Controls
 
             // Default time is current time
             _currentTime = DateTime.Now;
+
+            // Initialize events list
+            _scheduledEvents = new List<ScheduledEvent>();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -64,6 +85,9 @@ namespace WorldClock.Controls
             // Draw clock face
             g.FillEllipse(Brushes.White, center.X - radius, center.Y - radius, clockDiameter, clockDiameter);
             g.DrawEllipse(new Pen(Color.Black, 2), center.X - radius, center.Y - radius, clockDiameter, clockDiameter);
+
+            // Draw event indicators (before hour marks so they're behind)
+            DrawEventIndicators(g, center, radius);
 
             // Draw hour marks
             for (int i = 1; i <= 12; i++)
@@ -118,20 +142,56 @@ namespace WorldClock.Controls
             // Draw center point
             g.FillEllipse(Brushes.Black, center.X - 4, center.Y - 4, 8, 8);
 
-            // Draw digital time (update to 12-hour format)
-            string digitalTime = _currentTime.ToString("h:mm:ss tt"); // Changed to 12-hour format with AM/PM
+            // Draw digital time
+            string digitalTime = _currentTime.ToString("h:mm:ss tt"); // 12-hour format
             StringFormat digitalFormat = new StringFormat();
             digitalFormat.Alignment = StringAlignment.Center;
             digitalFormat.LineAlignment = StringAlignment.Center;
 
             RectangleF digitalRect = new RectangleF(0, center.Y + radius + 10, Width, 20);
-            g.DrawString(digitalTime, _digitalFont, Brushes.Black, digitalRect, digitalFormat);         
+            g.DrawString(digitalTime, _digitalFont, Brushes.Black, digitalRect, digitalFormat);
 
             // Draw time zone name
             if (!string.IsNullOrEmpty(_timeZoneName))
             {
                 RectangleF nameRect = new RectangleF(0, center.Y + radius + 30, Width, 20);
                 g.DrawString(_timeZoneName, _digitalFont, Brushes.Blue, nameRect, digitalFormat);
+            }
+        }
+
+        private void DrawEventIndicators(Graphics g, Point center, int radius)
+        {
+            if (_scheduledEvents == null || _scheduledEvents.Count == 0)
+                return;
+
+            // Filter events for today in this time zone
+            var todayEvents = _scheduledEvents
+                .Where(e => e.GetEventTimeIn(_timeZoneInfo).Date == _currentTime.Date)
+                .ToList();
+
+            foreach (var scheduledEvent in todayEvents)
+            {
+                // Convert event time to local time zone time
+                DateTime eventTimeInThisZone = scheduledEvent.GetEventTimeIn(_timeZoneInfo);
+
+                // Calculate angle based on event time
+                double eventHour = eventTimeInThisZone.Hour % 12 + eventTimeInThisZone.Minute / 60.0;
+                double eventAngle = eventHour * 30 * Math.PI / 180; // 30 degrees per hour
+
+                // Draw indicator dot on the clock face
+                float dotRadius = 4f;
+                float dotDistance = radius * 0.85f; // Place slightly inside the hour markers
+
+                // Calculate dot position
+                float dotX = center.X + (float)(dotDistance * Math.Sin(eventAngle));
+                float dotY = center.Y - (float)(dotDistance * Math.Cos(eventAngle));
+
+                // Draw colored indicator based on event type
+                using (Brush brush = new SolidBrush(scheduledEvent.IndicatorColor))
+                {
+                    g.FillEllipse(brush, dotX - dotRadius, dotY - dotRadius, dotRadius * 2, dotRadius * 2);
+                    g.DrawEllipse(Pens.Black, dotX - dotRadius, dotY - dotRadius, dotRadius * 2, dotRadius * 2);
+                }
             }
         }
     }
