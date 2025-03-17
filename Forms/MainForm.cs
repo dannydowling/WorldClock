@@ -13,6 +13,9 @@ namespace WorldClock
         private DataService _dataService;
         private Dictionary<string, ClockTabPanel> _clockPanels;
         private bool _dataLoaded = false;
+        private ContextMenuStrip _clockContextMenu;
+        private ClockTabPanel _currentContextMenuClock;
+
 
         public MainForm()
         {
@@ -32,10 +35,12 @@ namespace WorldClock
         {            
             _dataLoaded = _dataService.LoadData(_timeZoneService, _eventService);            
             LoadTimeZoneComboBox();
-            SetupUI();
             SetupContextMenu();
+            SetupUI();            
             _updateTimer.Start();
         }
+
+        
 
         private void LoadTimeZoneComboBox()
         {
@@ -63,8 +68,12 @@ namespace WorldClock
                 ClockTabPanel clockPanel = new ClockTabPanel(timeZone, _eventService);
                 // Subscribe to the RemoveRequested event
                 clockPanel.RemoveRequested += ClockPanel_RemoveRequested;
+                // Set the context menu for this panel
+                clockPanel.ContextMenuStrip = _clockContextMenu;
+
                 // Store the clock panel for later updates
                 _clockPanels.Add(timeZone.Name, clockPanel);
+
                 // Add the panel to the flow layout panel
                 clockFlowLayoutPanel.Controls.Add(clockPanel);
             }
@@ -147,73 +156,76 @@ namespace WorldClock
 
         private void SetupContextMenu()
         {
-            ContextMenuStrip clockContextMenu = new ContextMenuStrip();
-            clockContextMenu.Items.Add("Add Flight Arrival", null, AddFlightArrival_Click);
-            clockContextMenu.Items.Add("Add Flight Departure", null, AddFlightDeparture_Click);
-            clockContextMenu.Items.Add("Add Meeting", null, AddMeeting_Click);
-            clockContextMenu.Items.Add("Add Reminder", null, AddReminder_Click);
-            clockContextMenu.Items.Add("-"); // Separator
-            clockContextMenu.Items.Add("Remove Time Zone", null, RemoveTimeZone_Click);
+            // Create a single context menu to be shared by all clocks
+            _clockContextMenu = new ContextMenuStrip();
+            _clockContextMenu.Items.Add("Add Flight Arrival", null, AddFlightArrival_Click);
+            _clockContextMenu.Items.Add("Add Flight Departure", null, AddFlightDeparture_Click);
+            _clockContextMenu.Items.Add("Add Meeting", null, AddMeeting_Click);
+            _clockContextMenu.Items.Add("Add Reminder", null, AddReminder_Click);
+            _clockContextMenu.Items.Add("-"); // Separator
+            _clockContextMenu.Items.Add("Remove Time Zone", null, RemoveTimeZone_Click);
 
-            // Set the context menu for each clock panel
-            foreach (var panel in _clockPanels.Values)
-            {
-                panel.ContextMenuStrip = clockContextMenu;
-            }
+            // The context menu needs to know which clock was clicked
+            _clockContextMenu.Opening += ClockContextMenu_Opening;
         }
 
-        private void AddFlightArrival_Click(object sender, EventArgs e)
+        private void ClockContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (sender is ToolStripMenuItem menuItem &&
-                menuItem.Owner is ContextMenuStrip menu &&
-                menu.SourceControl is ClockTabPanel panel)
-            {
-                AddEventWithType(panel.TimeZoneModel, EventType.FlightArrival);
-            }
-        }
+            // Get the control that was right-clicked
+            _currentContextMenuClock = _clockContextMenu.SourceControl as ClockTabPanel;
 
-        private void AddFlightDeparture_Click(object sender, EventArgs e)
-        {
-            if (sender is ToolStripMenuItem menuItem &&
-                menuItem.Owner is ContextMenuStrip menu &&
-                menu.SourceControl is ClockTabPanel panel)
+            // If we couldn't determine which clock was clicked, cancel the menu
+            if (_currentContextMenuClock == null)
             {
-                AddEventWithType(panel.TimeZoneModel, EventType.FlightDeparture);
-            }
-        }
-
-        private void AddMeeting_Click(object sender, EventArgs e)
-        {
-            if (sender is ToolStripMenuItem menuItem &&
-                menuItem.Owner is ContextMenuStrip menu &&
-                menu.SourceControl is ClockTabPanel panel)
-            {
-                AddEventWithType(panel.TimeZoneModel, EventType.Meeting);
-            }
-        }
-
-        private void AddReminder_Click(object sender, EventArgs e)
-        {
-            if (sender is ToolStripMenuItem menuItem &&
-                menuItem.Owner is ContextMenuStrip menu &&
-                menu.SourceControl is ClockTabPanel panel)
-            {
-                AddEventWithType(panel.TimeZoneModel, EventType.Reminder);
+                e.Cancel = true;
             }
         }
 
         private void RemoveTimeZone_Click(object sender, EventArgs e)
         {
-            if (sender is ToolStripMenuItem menuItem &&
-                menuItem.Owner is ContextMenuStrip menu &&
-                menu.SourceControl is ClockTabPanel panel)
+            // Use the currently tracked clock panel instead of trying to get it from the sender
+            if (_currentContextMenuClock != null)
             {
-                if (MessageBox.Show($"Are you sure you want to remove {panel.TimeZoneModel.DisplayName}?",
+                if (MessageBox.Show($"Are you sure you want to remove {_currentContextMenuClock.TimeZoneModel.DisplayName}?",
                     "Remove Time Zone", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    _timeZoneService.RemoveTimeZone(panel.TimeZoneModel.Name);
+                    _timeZoneService.RemoveTimeZone(_currentContextMenuClock.TimeZoneModel.Name);
                     RefreshClocks();
                 }
+            }
+        }
+
+
+
+        private void AddFlightArrival_Click(object sender, EventArgs e)
+        {
+            if (_currentContextMenuClock != null)
+            {
+                AddEventWithType(_currentContextMenuClock.TimeZoneModel, EventType.FlightArrival);
+            }
+        }
+
+        private void AddFlightDeparture_Click(object sender, EventArgs e)
+        {
+            if (_currentContextMenuClock != null)
+            {
+                AddEventWithType(_currentContextMenuClock.TimeZoneModel, EventType.FlightDeparture);
+            }
+        }
+
+        private void AddMeeting_Click(object sender, EventArgs e)
+        {
+            if (_currentContextMenuClock != null)
+            {
+                AddEventWithType(_currentContextMenuClock.TimeZoneModel, EventType.Meeting);
+            }
+        }
+
+        private void AddReminder_Click(object sender, EventArgs e)
+        {
+            if (_currentContextMenuClock != null)
+            {
+                AddEventWithType(_currentContextMenuClock.TimeZoneModel, EventType.Reminder);
             }
         }
 
