@@ -19,7 +19,9 @@ namespace WorldClock
         [XmlIgnore]
         private TimeZoneInfo _timeZoneInfo = TimeZoneInfo.Utc;
 
+#pragma warning disable WFO1000 // Missing code serialization configuration for property content
         public string TimeZoneName
+
         {
             get { return _timeZoneName; }
             set
@@ -54,7 +56,7 @@ namespace WorldClock
                 Invalidate();
             }
         }
-
+#pragma warning restore WFO1000 // Missing code serialization configuration for property content
         public AnalogClockControl()
         {
             // Set default size

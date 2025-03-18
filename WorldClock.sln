@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75 d17.13
+VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldClock", "WorldClock.csproj", "{86277F91-1B17-4461-B5DA-299567F006D3}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "WorldClockSetup", "..\WorldClockSetup\WorldClockSetup.vdproj", "{29B95152-FED3-2E31-B02E-BAC553F5F6EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,8 @@ Global
 		{86277F91-1B17-4461-B5DA-299567F006D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86277F91-1B17-4461-B5DA-299567F006D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86277F91-1B17-4461-B5DA-299567F006D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29B95152-FED3-2E31-B02E-BAC553F5F6EB}.Debug|Any CPU.ActiveCfg = Debug
+		{29B95152-FED3-2E31-B02E-BAC553F5F6EB}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
