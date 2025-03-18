@@ -38,27 +38,28 @@ namespace WorldClock
             InitializeCustomComponents();
             _locationLogic = new ReadZipFileLogic();
             LoadCountriesAsync();
-            this.Text = $"Flight Calculator - {_timeZoneModel.DisplayName}";
+            Text = $"Flight Calculator - {_timeZoneModel.DisplayName}";
         }
 
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            SuspendLayout();
             // 
             // FlightCalculatorForm
             // 
-            this.ClientSize = new System.Drawing.Size(500, 650);
-            this.Name = "FlightCalculatorForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Flight Calculator";
-            this.ResumeLayout(false);
+            ClientSize = new Size(500, 650);
+            Name = "FlightCalculatorForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Flight Calculator";
+            ResumeLayout(false);
         }
 
         private void InitializeCustomComponents()
         {
-            this.Padding = new Padding(20);
+            Padding = new Padding(20);
 
-            // Origin section title
+            // Origin airport selection 
+
             Label originSectionLabel = new Label
             {
                 Text = "Origin Airport:",
@@ -67,7 +68,7 @@ namespace WorldClock
                 Font = new Font(this.Font, FontStyle.Bold)
             };
 
-            // Origin airport selection controls
+          
             Label originCountryLabel = new Label
             {
                 Text = "Country:",
@@ -130,7 +131,8 @@ namespace WorldClock
                 Enabled = false
             };
 
-            // Destination section title
+            // Destination airport selection
+            // 
             Label destSectionLabel = new Label
             {
                 Text = "Destination Airport:",
@@ -139,7 +141,7 @@ namespace WorldClock
                 Font = new Font(this.Font, FontStyle.Bold)
             };
 
-            // Destination airport selection controls
+           
             Label destCountryLabel = new Label
             {
                 Text = "Country:",
@@ -202,7 +204,7 @@ namespace WorldClock
                 Enabled = false
             };
 
-            // Departure date/time controls
+            // Departure date/time selection
             Label departureLabel = new Label
             {
                 Text = "Departure Time:",
@@ -309,53 +311,49 @@ namespace WorldClock
             resultsPanel.Controls.Add(_localArrivalTimeLabel);
 
             // Add controls to main form
-            this.Controls.Add(originSectionLabel);
-            this.Controls.Add(originCountryLabel);
-            this.Controls.Add(_originCountryComboBox);
-            this.Controls.Add(originStateLabel);
-            this.Controls.Add(_originStateComboBox);
-            this.Controls.Add(originCityLabel);
-            this.Controls.Add(_originCityComboBox);
-            this.Controls.Add(originAirportLabel);
-            this.Controls.Add(_originAirportComboBox);
+            Controls.Add(originSectionLabel);
+            Controls.Add(originCountryLabel);
+            Controls.Add(_originCountryComboBox);
+            Controls.Add(originStateLabel);
+            Controls.Add(_originStateComboBox);
+            Controls.Add(originCityLabel);
+            Controls.Add(_originCityComboBox);
+            Controls.Add(originAirportLabel);
+            Controls.Add(_originAirportComboBox);
 
-            this.Controls.Add(destSectionLabel);
-            this.Controls.Add(destCountryLabel);
-            this.Controls.Add(_destCountryComboBox);
-            this.Controls.Add(destStateLabel);
-            this.Controls.Add(_destStateComboBox);
-            this.Controls.Add(destCityLabel);
-            this.Controls.Add(_destCityComboBox);
-            this.Controls.Add(destAirportLabel);
-            this.Controls.Add(_destAirportComboBox);
+            Controls.Add(destSectionLabel);
+            Controls.Add(destCountryLabel);
+            Controls.Add(_destCountryComboBox);
+            Controls.Add(destStateLabel);
+            Controls.Add(_destStateComboBox);
+            Controls.Add(destCityLabel);
+            Controls.Add(_destCityComboBox);
+            Controls.Add(destAirportLabel);
+            Controls.Add(_destAirportComboBox);
 
-            this.Controls.Add(departureLabel);
-            this.Controls.Add(_departureDateTimePicker);
-            this.Controls.Add(_calculateButton);
-            this.Controls.Add(resultsPanel);
-
-            // Initialize LocationLogic and load data
-            _locationLogic = new ReadZipFileLogic();
+            Controls.Add(departureLabel);
+            Controls.Add(_departureDateTimePicker);
+            Controls.Add(_calculateButton);
+            Controls.Add(resultsPanel);
 
             // Load countries in the background
+            _locationLogic = new ReadZipFileLogic();           
             LoadCountriesAsync();
         }
-
-        // Method to load countries asynchronously
+       
         private async void LoadCountriesAsync()
         {
-            // Show loading indicator
-            this.Cursor = Cursors.WaitCursor;
+            
+            Cursor = Cursors.WaitCursor;
             _isLoading = true;
 
             await Task.Run(() => {
                 try
-                {
-                    // Get countries
+                {                    
                     var countries = _locationLogic.GetCountries();
 
                     // Update UI on main thread
-                    this.Invoke(new Action(() => {
+                    Invoke(new Action(() => {
                         _originCountryComboBox.Items.Clear();
                         _destCountryComboBox.Items.Clear();
 
@@ -371,17 +369,17 @@ namespace WorldClock
                             _destCountryComboBox.SelectedIndex = 0;
                         }
 
-                        this.Cursor = Cursors.Default;
+                        Cursor = Cursors.Default;
                         _isLoading = false;
                     }));
                 }
                 catch (Exception ex)
                 {
                     // Handle error on main thread
-                    this.Invoke(new Action(() => {
+                    Invoke(new Action(() => {
                         MessageBox.Show($"Error loading countries: {ex.Message}", "Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        this.Cursor = Cursors.Default;
+                        Cursor = Cursors.Default;
                         _isLoading = false;
                     }));
                 }
@@ -567,8 +565,7 @@ namespace WorldClock
                 }
             });
         }
-
-        // Similar event handlers for destination selection
+                
         private void DestCountryComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_isLoading || _destCountryComboBox.SelectedItem == null)
@@ -587,7 +584,7 @@ namespace WorldClock
             string country = _destCountryComboBox.SelectedItem.ToString();
 
             // Show loading indicator
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             _isLoading = true;
 
             // Load states in background
@@ -596,7 +593,7 @@ namespace WorldClock
                 {
                     var states = _locationLogic.GetStates(country);
 
-                    this.Invoke(new Action(() => {
+                    Invoke(new Action(() => {
                         foreach (var state in states)
                         {
                             _destStateComboBox.Items.Add(state);
@@ -608,16 +605,16 @@ namespace WorldClock
                             _destStateComboBox.SelectedIndex = 0;
                         }
 
-                        this.Cursor = Cursors.Default;
+                        Cursor = Cursors.Default;
                         _isLoading = false;
                     }));
                 }
                 catch (Exception ex)
                 {
-                    this.Invoke(new Action(() => {
+                    Invoke(new Action(() => {
                         MessageBox.Show($"Error loading states: {ex.Message}", "Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        this.Cursor = Cursors.Default;
+                        Cursor = Cursors.Default;
                         _isLoading = false;
                     }));
                 }
@@ -641,7 +638,7 @@ namespace WorldClock
             string state = _destStateComboBox.SelectedItem.ToString();
 
             // Show loading indicator
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             _isLoading = true;
 
             // Load cities in background
@@ -695,7 +692,7 @@ namespace WorldClock
             string city = _destCityComboBox.SelectedItem.ToString();
 
             // Show loading indicator
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             _isLoading = true;
 
             // Load airports in background
@@ -704,7 +701,7 @@ namespace WorldClock
                 {
                     var airports = _locationLogic.LocationsLookup(country, state, city);
 
-                    this.Invoke(new Action(() => {
+                    Invoke(new Action(() => {
                         foreach (var airport in airports)
                         {
                             string displayText = $"{airport.icao} - {airport.name}";
@@ -720,16 +717,16 @@ namespace WorldClock
                             _destAirportComboBox.SelectedIndex = 0;
                         }
 
-                        this.Cursor = Cursors.Default;
+                        Cursor = Cursors.Default;
                         _isLoading = false;
                     }));
                 }
                 catch (Exception ex)
                 {
-                    this.Invoke(new Action(() => {
+                    Invoke(new Action(() => {
                         MessageBox.Show($"Error loading airports: {ex.Message}", "Error",
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        this.Cursor = Cursors.Default;
+                        Cursor = Cursors.Default;
                         _isLoading = false;
                     }));
                 }
@@ -752,6 +749,7 @@ namespace WorldClock
 
                 LocationClass originAirport = originItem.Value;
                 LocationClass destAirport = destItem.Value;
+                LocationToTimezone timeZoneConverter = new LocationToTimezone();
 
                 // Convert LocationClass to Airport format for the calculator
                 Airport originAirportObj = new Airport
@@ -762,7 +760,7 @@ namespace WorldClock
                     Country = originAirport.country,
                     Latitude = originAirport.lat,
                     Longitude = originAirport.lon,
-                    TimeZoneId = EstimateTimeZoneId(originAirport.lon) // Estimate timezone based on longitude
+                    TimeZoneId = timeZoneConverter.GetTimezoneUsingTimeZoneConverter(originAirport.country, originAirport.state) 
                 };
 
                 Airport destAirportObj = new Airport
@@ -773,7 +771,7 @@ namespace WorldClock
                     Country = destAirport.country,
                     Latitude = destAirport.lat,
                     Longitude = destAirport.lon,
-                    TimeZoneId = EstimateTimeZoneId(destAirport.lon) // Estimate timezone based on longitude
+                    TimeZoneId = timeZoneConverter.GetTimezoneUsingTimeZoneConverter(destAirport.country, destAirport.state)
                 };
 
                 // Calculate distance
@@ -821,22 +819,8 @@ namespace WorldClock
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private string EstimateTimeZoneId(double lon)
-        {
-            // Very simple estimation based on longitude
-            if (lon > 142.5) return "Tokyo Standard Time"; // Far East
-            else if (lon > 112.5) return "China Standard Time"; // China
-            else if (lon > 52.5) return "Arabian Standard Time"; // Middle East
-            else if (lon > 7.5) return "Central European Standard Time"; // Europe
-            else if (lon > -22.5) return "GMT Standard Time"; // UK
-            else if (lon > -67.5) return "Eastern Standard Time"; // Eastern US
-            else if (lon > -112.5) return "Pacific Standard Time"; // Western US
-            else if (lon > -157.5) return "Alaskan Standard Time"; // Alaska
-            else if (lon > -172.5) return "Hawaiian Standard Time"; // Hawaii
-            else return "New Zealand Standard Time"; // NZ/Dateline
-        }
-
-        // Calculate distance between two points using the Haversine formula
+        
+        // Haversine
         private double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
             const double EarthRadiusMiles = 3958.8; // Earth's radius in miles

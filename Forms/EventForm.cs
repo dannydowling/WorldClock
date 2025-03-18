@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-
 namespace WorldClock
 {
     public partial class EventForm : Form
@@ -19,14 +18,13 @@ namespace WorldClock
             _timeZoneModel = timeZoneModel;
 
             if (existingEvent != null)
-            {
-                // Editing an existing event
+            {                
                 _scheduledEvent = existingEvent;
                 Text = "Edit Event";
             }
             else
             {
-                // Creating a new event
+                // create a new event
                 _scheduledEvent = new ScheduledEvent
                 {
                     TimeZone = _timeZoneModel.TimeZoneInfo,
@@ -41,180 +39,180 @@ namespace WorldClock
 
         private void InitializeComponent()
         {
-            this.titleLabel = new System.Windows.Forms.Label();
-            this.titleTextBox = new System.Windows.Forms.TextBox();
-            this.typeLabel = new System.Windows.Forms.Label();
-            this.typeComboBox = new System.Windows.Forms.ComboBox();
-            this.dateTimeLabel = new System.Windows.Forms.Label();
-            this.datePicker = new System.Windows.Forms.DateTimePicker();
-            this.timePicker = new System.Windows.Forms.DateTimePicker();
-            this.descriptionLabel = new System.Windows.Forms.Label();
-            this.descriptionTextBox = new System.Windows.Forms.TextBox();
-            this.colorLabel = new System.Windows.Forms.Label();
-            this.colorButton = new System.Windows.Forms.Button();
-            this.saveButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            titleLabel = new Label();
+            titleTextBox = new TextBox();
+            typeLabel = new Label();
+            typeComboBox = new ComboBox();
+            dateTimeLabel = new Label();
+            datePicker = new DateTimePicker();
+            timePicker = new DateTimePicker();
+            descriptionLabel = new Label();
+            descriptionTextBox = new TextBox();
+            colorLabel = new Label();
+            colorButton = new Button();
+            saveButton = new Button();
+            cancelButton = new Button();
+            SuspendLayout();
             // 
             // titleLabel
             // 
-            this.titleLabel.AutoSize = true;
-            this.titleLabel.Location = new System.Drawing.Point(12, 15);
-            this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(35, 17);
-            this.titleLabel.TabIndex = 0;
-            this.titleLabel.Text = "Title:";
+            titleLabel.AutoSize = true;
+            titleLabel.Location = new Point(12, 15);
+            titleLabel.Name = "titleLabel";
+            titleLabel.Size = new Size(35, 17);
+            titleLabel.TabIndex = 0;
+            titleLabel.Text = "Title:";
             // 
             // titleTextBox
             // 
-            this.titleTextBox.Location = new System.Drawing.Point(95, 12);
-            this.titleTextBox.Name = "titleTextBox";
-            this.titleTextBox.Size = new System.Drawing.Size(277, 22);
-            this.titleTextBox.TabIndex = 1;
+            titleTextBox.Location = new Point(95, 12);
+            titleTextBox.Name = "titleTextBox";
+            titleTextBox.Size = new Size(277, 22);
+            titleTextBox.TabIndex = 1;
             // 
             // typeLabel
             // 
-            this.typeLabel.AutoSize = true;
-            this.typeLabel.Location = new System.Drawing.Point(12, 45);
-            this.typeLabel.Name = "typeLabel";
-            this.typeLabel.Size = new System.Drawing.Size(44, 17);
-            this.typeLabel.TabIndex = 2;
-            this.typeLabel.Text = "Type:";
+            typeLabel.AutoSize = true;
+            typeLabel.Location = new Point(12, 45);
+            typeLabel.Name = "typeLabel";
+            typeLabel.Size = new Size(44, 17);
+            typeLabel.TabIndex = 2;
+            typeLabel.Text = "Type:";
             // 
             // typeComboBox
             // 
-            this.typeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.typeComboBox.FormattingEnabled = true;
-            this.typeComboBox.Location = new System.Drawing.Point(95, 42);
-            this.typeComboBox.Name = "typeComboBox";
-            this.typeComboBox.Size = new System.Drawing.Size(277, 24);
-            this.typeComboBox.TabIndex = 3;
-            this.typeComboBox.SelectedIndexChanged += new System.EventHandler(this.typeComboBox_SelectedIndexChanged);
+            typeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            typeComboBox.FormattingEnabled = true;
+            typeComboBox.Location = new Point(95, 42);
+            typeComboBox.Name = "typeComboBox";
+            typeComboBox.Size = new Size(277, 24);
+            typeComboBox.TabIndex = 3;
+            typeComboBox.SelectedIndexChanged += new EventHandler(this.typeComboBox_SelectedIndexChanged);
             // 
             // dateTimeLabel
             // 
-            this.dateTimeLabel.AutoSize = true;
-            this.dateTimeLabel.Location = new System.Drawing.Point(12, 75);
-            this.dateTimeLabel.Name = "dateTimeLabel";
-            this.dateTimeLabel.Size = new System.Drawing.Size(77, 17);
-            this.dateTimeLabel.TabIndex = 4;
-            this.dateTimeLabel.Text = "Date/Time:";
+            dateTimeLabel.AutoSize = true;
+            dateTimeLabel.Location = new Point(12, 75);
+            dateTimeLabel.Name = "dateTimeLabel";
+            dateTimeLabel.Size = new Size(77, 17);
+            dateTimeLabel.TabIndex = 4;
+            dateTimeLabel.Text = "Date/Time:";
             // 
             // datePicker
             // 
-            this.datePicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.datePicker.Location = new System.Drawing.Point(95, 72);
-            this.datePicker.Name = "datePicker";
-            this.datePicker.Size = new System.Drawing.Size(130, 22);
-            this.datePicker.TabIndex = 5;
+            datePicker.Format = DateTimePickerFormat.Short;
+            datePicker.Location = new Point(95, 72);
+            datePicker.Name = "datePicker";
+            datePicker.Size = new Size(130, 22);
+            datePicker.TabIndex = 5;
             // 
             // timePicker
             // 
-            this.timePicker.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.timePicker.Location = new System.Drawing.Point(231, 72);
-            this.timePicker.Name = "timePicker";
-            this.timePicker.ShowUpDown = true;
-            this.timePicker.Size = new System.Drawing.Size(141, 22);
-            this.timePicker.TabIndex = 6;
+            timePicker.Format = DateTimePickerFormat.Time;
+            timePicker.Location = new Point(231, 72);
+            timePicker.Name = "timePicker";
+            timePicker.ShowUpDown = true;
+            timePicker.Size = new Size(141, 22);
+            timePicker.TabIndex = 6;
             // 
             // descriptionLabel
             // 
-            this.descriptionLabel.AutoSize = true;
-            this.descriptionLabel.Location = new System.Drawing.Point(12, 105);
-            this.descriptionLabel.Name = "descriptionLabel";
-            this.descriptionLabel.Size = new System.Drawing.Size(83, 17);
-            this.descriptionLabel.TabIndex = 7;
-            this.descriptionLabel.Text = "Description:";
+            descriptionLabel.AutoSize = true;
+            descriptionLabel.Location = new Point(12, 105);
+            descriptionLabel.Name = "descriptionLabel";
+            descriptionLabel.Size = new Size(83, 17);
+            descriptionLabel.TabIndex = 7;
+            descriptionLabel.Text = "Description:";
             // 
             // descriptionTextBox
             // 
-            this.descriptionTextBox.Location = new System.Drawing.Point(95, 102);
-            this.descriptionTextBox.Multiline = true;
-            this.descriptionTextBox.Name = "descriptionTextBox";
-            this.descriptionTextBox.Size = new System.Drawing.Size(277, 60);
-            this.descriptionTextBox.TabIndex = 8;
+            descriptionTextBox.Location = new Point(95, 102);
+            descriptionTextBox.Multiline = true;
+            descriptionTextBox.Name = "descriptionTextBox";
+            descriptionTextBox.Size = new Size(277, 60);
+            descriptionTextBox.TabIndex = 8;
             // 
             // colorLabel
             // 
-            this.colorLabel.AutoSize = true;
-            this.colorLabel.Location = new System.Drawing.Point(12, 175);
-            this.colorLabel.Name = "colorLabel";
-            this.colorLabel.Size = new System.Drawing.Size(45, 17);
-            this.colorLabel.TabIndex = 9;
-            this.colorLabel.Text = "Color:";
+            colorLabel.AutoSize = true;
+            colorLabel.Location = new Point(12, 175);
+            colorLabel.Name = "colorLabel";
+            colorLabel.Size = new Size(45, 17);
+            colorLabel.TabIndex = 9;
+            colorLabel.Text = "Color:";
             // 
             // colorButton
             // 
-            this.colorButton.BackColor = System.Drawing.Color.Blue;
-            this.colorButton.Location = new System.Drawing.Point(95, 170);
-            this.colorButton.Name = "colorButton";
-            this.colorButton.Size = new System.Drawing.Size(30, 30);
-            this.colorButton.TabIndex = 10;
-            this.colorButton.UseVisualStyleBackColor = false;
-            this.colorButton.Click += new System.EventHandler(this.colorButton_Click);
+            colorButton.BackColor = Color.Blue;
+            colorButton.Location = new Point(95, 170);
+            colorButton.Name = "colorButton";
+            colorButton.Size = new Size(30, 30);
+            colorButton.TabIndex = 10;
+            colorButton.UseVisualStyleBackColor = false;
+            colorButton.Click += new EventHandler(this.colorButton_Click);
             // 
             // saveButton
             // 
-            this.saveButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.saveButton.Location = new System.Drawing.Point(95, 215);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(130, 30);
-            this.saveButton.TabIndex = 11;
-            this.saveButton.Text = "Save";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            saveButton.DialogResult = DialogResult.OK;
+            saveButton.Location = new Point(95, 215);
+            saveButton.Name = "saveButton";
+            saveButton.Size = new Size(130, 30);
+            saveButton.TabIndex = 11;
+            saveButton.Text = "Save";
+            saveButton.UseVisualStyleBackColor = true;
+            saveButton.Click += new EventHandler(this.saveButton_Click);
             // 
             // cancelButton
             // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(242, 215);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(130, 30);
-            this.cancelButton.TabIndex = 12;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
+            cancelButton.DialogResult = DialogResult.Cancel;
+            cancelButton.Location = new Point(242, 215);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new Size(130, 30);
+            cancelButton.TabIndex = 12;
+            cancelButton.Text = "Cancel";
+            cancelButton.UseVisualStyleBackColor = true;
             // 
             // EventForm
             // 
-            this.AcceptButton = this.saveButton;
-            this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(384, 257);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.saveButton);
-            this.Controls.Add(this.colorButton);
-            this.Controls.Add(this.colorLabel);
-            this.Controls.Add(this.descriptionTextBox);
-            this.Controls.Add(this.descriptionLabel);
-            this.Controls.Add(this.timePicker);
-            this.Controls.Add(this.datePicker);
-            this.Controls.Add(this.dateTimeLabel);
-            this.Controls.Add(this.typeComboBox);
-            this.Controls.Add(this.typeLabel);
-            this.Controls.Add(this.titleTextBox);
-            this.Controls.Add(this.titleLabel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "EventForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Event";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = saveButton;
+            CancelButton = cancelButton;
+            ClientSize = new Size(384, 257);
+            Controls.Add(cancelButton);
+            Controls.Add(saveButton);
+            Controls.Add(colorButton);
+            Controls.Add(colorLabel);
+            Controls.Add(descriptionTextBox);
+            Controls.Add(descriptionLabel);
+            Controls.Add(timePicker);
+            Controls.Add(datePicker);
+            Controls.Add(dateTimeLabel);
+            Controls.Add(typeComboBox);
+            Controls.Add(typeLabel);
+            Controls.Add(titleTextBox);
+            Controls.Add(titleLabel);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "EventForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Event";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
-        private System.Windows.Forms.Label titleLabel;
-        private System.Windows.Forms.TextBox titleTextBox;
-        private System.Windows.Forms.Label typeLabel;
-        private System.Windows.Forms.ComboBox typeComboBox;
-        private System.Windows.Forms.Label dateTimeLabel;
-        private System.Windows.Forms.DateTimePicker datePicker;
-        private System.Windows.Forms.DateTimePicker timePicker;
-        private System.Windows.Forms.Label descriptionLabel;
-        private System.Windows.Forms.TextBox descriptionTextBox;
-        private System.Windows.Forms.Label colorLabel;
-        private System.Windows.Forms.Button colorButton;
-        private System.Windows.Forms.Button saveButton;
-        private System.Windows.Forms.Button cancelButton;
+        private Label titleLabel;
+        private TextBox titleTextBox;
+        private Label typeLabel;
+        private ComboBox typeComboBox;
+        private Label dateTimeLabel;
+        private DateTimePicker datePicker;
+        private DateTimePicker timePicker;
+        private Label descriptionLabel;
+        private TextBox descriptionTextBox;
+        private Label colorLabel;
+        private Button colorButton;
+        private Button saveButton;
+        private Button cancelButton;
 
         private void PopulateEventTypes()
         {

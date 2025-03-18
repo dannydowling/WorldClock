@@ -32,15 +32,13 @@ namespace WorldClock
         }
 
         private void MainForm_Load(object sender, EventArgs e)
-        {            
-            _dataLoaded = _dataService.LoadData(_timeZoneService, _eventService);            
+        {
+            _dataLoaded = _dataService.LoadData(_timeZoneService, _eventService);
             LoadTimeZoneComboBox();
             SetupContextMenu();
-            SetupUI();            
+            SetupUI();
             _updateTimer.Start();
         }
-
-        
 
         private void LoadTimeZoneComboBox()
         {
@@ -59,25 +57,22 @@ namespace WorldClock
         }
 
         private void SetupUI()
-        {           
+        {
             clockFlowLayoutPanel.Controls.Clear();
             _clockPanels.Clear();
-           
+
             foreach (var timeZone in _timeZoneService.GetAllTimeZones())
-            {               
+            {
                 ClockTabPanel clockPanel = new ClockTabPanel(timeZone, _eventService);
-                // Subscribe to the RemoveRequested event
-                clockPanel.RemoveRequested += ClockPanel_RemoveRequested;
-                // Set the context menu for this panel
-                clockPanel.ContextMenuStrip = _clockContextMenu;
-
-                // Store the clock panel for later updates
+                
+                // event handling
+                clockPanel.RemoveRequested += ClockPanel_RemoveRequested;                
+                clockPanel.ContextMenuStrip = _clockContextMenu;                
                 _clockPanels.Add(timeZone.Name, clockPanel);
-
-                // Add the panel to the flow layout panel
+                
                 clockFlowLayoutPanel.Controls.Add(clockPanel);
             }
-            
+
             UpdateClocks();
         }
 
@@ -113,8 +108,7 @@ namespace WorldClock
             {
                 string tzId = selectedTz.Key;
                 string displayName = tzId.Split('/').LastOrDefault() ?? tzId;
-
-                // Convert to title case and replace underscores with spaces
+                
                 displayName = System.Globalization.CultureInfo.CurrentCulture.TextInfo
                     .ToTitleCase(displayName.ToLower())
                     .Replace("_", " ");
@@ -183,7 +177,7 @@ namespace WorldClock
 
         private void RemoveTimeZone_Click(object sender, EventArgs e)
         {
-            // Use the currently tracked clock panel instead of trying to get it from the sender
+            // Use the currently tracked clock panel
             if (_currentContextMenuClock != null)
             {
                 if (MessageBox.Show($"Are you sure you want to remove {_currentContextMenuClock.TimeZoneModel.DisplayName}?",
